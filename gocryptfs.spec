@@ -12,7 +12,7 @@
 
 Name:		gocryptfs
 Version: 	%{_version}
-Release: 	%{_release}
+Release: 	%{_release}%{?dist}
 Summary: 	Encrypted overlay filesystem written in Go
 URL:     	https://nuetzlich.net/gocryptfs/
 License: 	MIT
