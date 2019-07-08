@@ -8,10 +8,6 @@
 
 %define building_from_source 1
 
-#%if 0%{?rhel} < 700
-#%define building_from_source 0
-#%endif
-
 %define _version 1.7
 %define _release %{lua: print(os.date("%y%m%d"))}
 
@@ -21,12 +17,8 @@ Release: 	%{_release}%{?dist}
 Summary: 	Encrypted overlay filesystem written in Go
 URL:     	https://nuetzlich.net/gocryptfs/
 License: 	MIT
-%if 0%{building_from_source} > 0
 Source0:	https://github.com/rfjakob/gocryptfs/releases/download/v%{version}/gocryptfs_v%{version}_src.tar.gz
 Patch0:		8f2723b38-add-nofail.diff
-%else
-Source0: 	https://github.com/rfjakob/gocryptfs/releases/download/v%{version}/gocryptfs_v%{version}_linux-static_amd64.tar.gz
-%endif
 Requires:	fuse
 %if 0%{building_from_source} > 0
 BuildRequires: 	golang
@@ -42,7 +34,6 @@ as a mountable FUSE filesystem. Each file in gocryptfs
 is stored one corresponding encrypted file on the hard disk.
 
 %prep
-%if 0%{building_from_source} > 0
 %setup -c %{name}_v%{version}_src
 %patch0 -p0
 
@@ -56,9 +47,6 @@ go get -d -t -v ./...
 cp _build/bin/gocryptfs .
 cp ./Documentation/gocryptfs.1 .
 popd
-%else
-%setup -c %{name}-%{version}
-%endif
 
 %install
 install -D -m 0755 ./gocryptfs %{buildroot}%{_bindir}/gocryptfs
