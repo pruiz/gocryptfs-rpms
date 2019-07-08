@@ -1,0 +1,62 @@
+diff --git a/Documentation/MANPAGE.md b/Documentation/MANPAGE.md
+index 6fa5156..36866fe 100644
+--- a/Documentation/MANPAGE.md
++++ b/Documentation/MANPAGE.md
+@@ -238,6 +238,12 @@ See `-dev, -nodev`.
+ #### -noexec
+ See `-exec, -noexec`.
+ 
++#### -nofail
++Having the `nofail` option in `/etc/fstab` instructs `systemd` to continue
++booting normally even if the mount fails (see `man systemd.fstab`).
++
++The option is ignored by `gocryptfs` itself and has no effect outside `/etc/fstab`.
++
+ #### -nonempty
+ Allow mounting over non-empty directories. FUSE by default disallows
+ this to prevent accidental shadowing of files.
+diff --git a/README.md b/README.md
+index 7614496..4ada2a1 100644
+--- a/README.md
++++ b/README.md
+@@ -171,6 +171,7 @@ vNEXT, in progress
+   ([#387](https://github.com/rfjakob/gocryptfs/issues/387)).
+   Note: as a security precaution, the owner must still manually 
+   `chmod gocryptfs.conf 0440` to allow mounting.
++* Allow the `nofail` option in `/etc/fstab`
+ 
+ v1.7, 2019-03-17
+ * **Fix possible symlink race attacks in forward mode** when using allow_other + plaintextnames
+diff --git a/cli_args.go b/cli_args.go
+index c434abb..f1cefb4 100644
+--- a/cli_args.go
++++ b/cli_args.go
+@@ -212,6 +212,9 @@ func parseCliOpts() (args argContainer) {
+ 	flagSet.DurationVar(&args.idle, "idle", 0, "Auto-unmount after specified idle duration (ignored in reverse mode). "+
+ 		"Durations are specified like \"500s\" or \"2h45m\". 0 means stay mounted indefinitely.")
+ 
++	var nofail bool
++	flagSet.BoolVar(&nofail, "nofail", false, "Ignored for /etc/fstab compatibility")
++
+ 	var dummyString string
+ 	flagSet.StringVar(&dummyString, "o", "", "For compatibility with mount(1), options can be also passed as a comma-separated list to -o on the end.")
+ 	// Actual parsing
+diff --git a/tests/cli/cli_test.go b/tests/cli/cli_test.go
+index 438ba16..58ffe44 100644
+--- a/tests/cli/cli_test.go
++++ b/tests/cli/cli_test.go
+@@ -285,6 +285,14 @@ func TestNonempty(t *testing.T) {
+ 	test_helpers.UnmountPanic(mnt)
+ }
+ 
++// -nofail should be ignored and the mount should succeed
++func TestNofail(t *testing.T) {
++	dir := test_helpers.InitFS(t)
++	mnt := dir + ".mnt"
++	test_helpers.MountOrFatal(t, dir, mnt, "-nofail", "-extpass=echo test")
++	defer test_helpers.UnmountPanic(mnt)
++}
++
+ // Test "mountpoint shadows cipherdir" handling
+ func TestShadows(t *testing.T) {
+ 	mnt := test_helpers.InitFS(t)

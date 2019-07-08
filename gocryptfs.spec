@@ -1,9 +1,9 @@
 #### NOTE: if building locally you may need to do the following:
 ####
 #### yum install rpmdevtools -y
-#### spectool -g -R rpm/quads.spec
+#### spectool -g -R rpm/gocryptfs.spec
 ####
-#### At this point you can use rpmbuild -ba quads.spec
+#### At this point you can use rpmbuild -ba gocryptfs.spec
 #### (this is because our Source0 is a remote Github location
 
 
@@ -17,6 +17,7 @@ Summary: 	Encrypted overlay filesystem written in Go
 URL:     	https://nuetzlich.net/gocryptfs/
 License: 	MIT
 Source0: 	https://github.com/rfjakob/gocryptfs/releases/download/v%{version}/gocryptfs_v%{version}_linux-static_amd64.tar.gz
+Patch0:		8f2723b38-add-nofail.diff
 Requires:	fuse
 BuildRequires: 	golang
 BuildRequires: 	openssl-devel
@@ -30,6 +31,7 @@ is stored one corresponding encrypted file on the hard disk.
 
 %prep
 %setup -c %{name}-%{version}
+%patch -p0
 
 %install
 install -D -m 0755 ./gocryptfs %{buildroot}%{_bindir}/gocryptfs
