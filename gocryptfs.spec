@@ -8,7 +8,7 @@
 
 %define building_from_source 1
 
-%if 0%{?centos_version} < 700 || 0%{?rhel_version} < 700
+%if 0%{?rhel} < 700
 %define building_from_source 0
 %endif
 
