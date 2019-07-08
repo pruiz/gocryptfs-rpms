@@ -31,7 +31,7 @@ is stored one corresponding encrypted file on the hard disk.
 
 %prep
 %setup -c %{name}-%{version}
-%patch -p0
+%patch0 -p0
 
 %install
 install -D -m 0755 ./gocryptfs %{buildroot}%{_bindir}/gocryptfs
