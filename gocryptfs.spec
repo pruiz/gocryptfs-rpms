@@ -8,9 +8,9 @@
 
 %define building_from_source 1
 
-%if 0%{?rhel} < 700
-%define building_from_source 0
-%endif
+#%if 0%{?rhel} < 700
+#%define building_from_source 0
+#%endif
 
 %define _version 1.7
 %define _release %{lua: print(os.date("%y%m%d"))}
@@ -56,7 +56,6 @@ go get -d -t -v ./...
 cp _build/bin/gocryptfs .
 cp ./Documentation/gocryptfs.1 .
 popd
-
 %else
 %setup -c %{name}-%{version}
 %endif
