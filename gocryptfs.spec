@@ -34,7 +34,7 @@ as a mountable FUSE filesystem. Each file in gocryptfs
 is stored one corresponding encrypted file on the hard disk.
 
 %prep
-%setup -c %{name}_v%{version}_src
+%setup -n %{name}_v%{version}_src
 %patch0 -p1
 
 mkdir -p ./_build/src/github.com/rfjakob
